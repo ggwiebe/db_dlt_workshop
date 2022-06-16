@@ -1,0 +1,4 @@
+"channelId","channelName","description"
+3,PARTNER,Customer originated OR referred from Partners
+4,UNAFFILIATED,Customers that request anonymity
+9,OTHER,Unattributed or unknown customer origination
