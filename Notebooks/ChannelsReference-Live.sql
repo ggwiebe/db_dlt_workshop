@@ -90,7 +90,7 @@
 --     description,
 --     input_file_name() input_file_name,
 --     current_timestamp() dlt_ingest_dt,
---     "RetailReference_Live" dlt_ingest_procedure,
+--     "ChannelReference-Live" dlt_ingest_procedure,
 --     current_user() dlt_ingest_principal
 --   FROM cloud_files('/FileStore/tables/ggw_dlt_wshp/channel*.csv', 'csv', map('header', 'true', 'cloudFiles.inferColumnTypes', 'true') )
 -- ;
@@ -134,7 +134,7 @@ SELECT
 -- COMMAND ----------
 
 -- SILVER - View against Bronze that will be used to load silver incrementally with APPLY CHANGES INTO
-CREATE TEMPORARY STREAMING LIVE VIEW channel_silver_v (
+CREATE TEMPORARY STREAMING LIVE VIEW channel_master_v (
   CONSTRAINT valid_file         EXPECT (input_file_name IS NOT NULL) ON VIOLATION DROP ROW,
   CONSTRAINT valid_procedure    EXPECT (dlt_ingest_procedure IS NOT NULL) ON VIOLATION DROP ROW
 )
@@ -154,7 +154,7 @@ AS SELECT channelId,
 -- SILVER [CDC] - Ingest changes via APPLY CHANGES INTO syntax
 CREATE STREAMING LIVE TABLE channel_master;
  APPLY CHANGES INTO LIVE.channel_master
-  FROM STREAM(LIVE.channel_silver_v)
+  FROM STREAM(LIVE.channel_master_v)
   KEYS (channelId)
   SEQUENCE BY dlt_ingest_dt
   STORED AS SCD TYPE 2
