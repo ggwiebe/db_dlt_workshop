@@ -86,14 +86,14 @@ SELECT *,
 
 -- COMMAND ----------
 
--- -- REFERENCE - View for Sales Channel reference table 
--- CREATE LIVE VIEW sales_channel_v
--- COMMENT "View built against Channel reference data."
--- AS SELECT channelId,
---           channelName,
---           description
---      FROM ggw_retail.channel
--- ;
+-- REFERENCE - View for Sales Channel reference table 
+CREATE LIVE VIEW sales_channel_v
+COMMENT "View built against Channel reference data."
+AS SELECT channelId,
+          channelName,
+          description
+     FROM ggw_retail_wshp.channel_master
+;
 
 -- COMMAND ----------
 
@@ -104,32 +104,31 @@ SELECT *,
 
 -- COMMAND ----------
 
--- -- SILVER - View against Bronze that will be used to load silver incrementally with APPLY CHANGES INTO
--- CREATE OR REFRESH STREAMING LIVE VIEW customer_bronze2silver_v (
---   CONSTRAINT valid_id           EXPECT (id IS NOT NULL) ON VIOLATION DROP ROW,
---   CONSTRAINT valid_active       EXPECT (active BETWEEN 0 AND 1) ON VIOLATION DROP ROW,
---   CONSTRAINT valid_channel      EXPECT (sales_channel IS NOT NULL),
---   CONSTRAINT valid_first_name   EXPECT (first_name IS NOT NULL),
---   CONSTRAINT valid_last_name    EXPECT (last_name IS NOT NULL)
--- )
--- TBLPROPERTIES ("quality" = "silver")
--- COMMENT "View of cleansed Bronze Customer for loading into Silver."
--- AS SELECT c.id,
---           UPPER(c.first_name) as first_name,
---           UPPER(c.last_name) as last_name,
---           c.email,
---           sc.channelName sales_channel,
---           c.active,
---           c.active_end_date,
---           c.update_dt,
---           c.update_user,
---           current_timestamp() dlt_ingest_dt,
---           "CustomerApplyChanges" dlt_ingest_procedure,
---           current_user() dlt_ingest_principal
---      FROM STREAM(live.customer_bronze) c
---      LEFT JOIN live.sales_channel_v sc
---        ON c.channel = sc.channelId
--- ;
+-- SILVER - View against Bronze that will be used to load silver incrementally with APPLY CHANGES INTO
+CREATE TEMPORARY STREAMING LIVE VIEW customer_bronze2silver_v (
+  CONSTRAINT valid_id           EXPECT (id IS NOT NULL) ON VIOLATION DROP ROW,
+  CONSTRAINT valid_active       EXPECT (active BETWEEN 0 AND 1) ON VIOLATION DROP ROW,
+  CONSTRAINT valid_channel      EXPECT (sales_channel IS NOT NULL),
+  CONSTRAINT valid_first_name   EXPECT (first_name IS NOT NULL),
+  CONSTRAINT valid_last_name    EXPECT (last_name IS NOT NULL)
+)
+COMMENT "View of cleansed Bronze Customer for loading into Silver."
+AS SELECT c.id,
+          UPPER(c.first_name) as first_name,
+          UPPER(c.last_name) as last_name,
+          c.email,
+          sc.channelName sales_channel,
+          c.active,
+          c.active_end_date,
+          c.update_dt,
+          c.update_user,
+          current_timestamp() dlt_ingest_dt,
+          "CustomerApplyChanges" dlt_ingest_procedure,
+          current_user() dlt_ingest_principal
+     FROM STREAM(live.customer_bronze) c
+     LEFT JOIN live.sales_channel_v sc
+       ON c.channel = sc.channelId
+;
 
 -- COMMAND ----------
 
