@@ -24,12 +24,28 @@
 -- MAGIC   description STRING) 
 -- MAGIC    USING CSV 
 -- MAGIC  OPTIONS ( 'header' = 'true', 'inferSchema' = 'true', 'mode' = 'FAILFAST')
--- MAGIC LOCATION 'dbfs:/FileStore/tables/channels.csv'
+-- MAGIC LOCATION 'dbfs:/FileStore/tables/ggw_dlt_wshp/channels.csv'
 -- MAGIC ```
 
 -- COMMAND ----------
 
--- MAGIC %md ## Step 1 - simplest query
+-- MAGIC %md ## Step 1-a - simplest query
+
+-- COMMAND ----------
+
+-- CREATE STREAMING LIVE TABLE channel
+-- TBLPROPERTIES ("quality" = "reference")
+-- COMMENT "Channel Reference dataset ingested from cloud object storage landing zone"
+-- AS 
+-- SELECT *
+--   FROM cloud_files('/FileStore/tables/ggw_dlt_wshp/channel*.csv', 'csv', map('header', 'true', 'cloudFiles.inferColumnTypes', 'true') )
+-- ;
+
+-- COMMAND ----------
+
+-- MAGIC %md ## Step 1-b - simple query  
+-- MAGIC   
+-- MAGIC Added comments and specific columns (if of interest)
 
 -- COMMAND ----------
 
@@ -118,7 +134,6 @@ SELECT
 -- COMMAND ----------
 
 -- SILVER - View against Bronze that will be used to load silver incrementally with APPLY CHANGES INTO
--- CREATE TEMPORARY [STREAMING] LIVE VIEW view_name
 CREATE TEMPORARY STREAMING LIVE VIEW channel_silver_v (
   CONSTRAINT valid_file         EXPECT (input_file_name IS NOT NULL) ON VIOLATION DROP ROW,
   CONSTRAINT valid_procedure    EXPECT (dlt_ingest_procedure IS NOT NULL) ON VIOLATION DROP ROW
@@ -136,11 +151,11 @@ AS SELECT channelId,
 
 -- COMMAND ----------
 
+-- SILVER [CDC] - Ingest changes via APPLY CHANGES INTO syntax
 CREATE STREAMING LIVE TABLE channel_master;
-
-APPLY CHANGES INTO LIVE.channel_master
-FROM STREAM(LIVE.channel_silver_v)
-KEYS (channelId)
-SEQUENCE BY dlt_ingest_dt
-STORED AS SCD TYPE 2
+ APPLY CHANGES INTO LIVE.channel_master
+  FROM STREAM(LIVE.channel_silver_v)
+  KEYS (channelId)
+  SEQUENCE BY dlt_ingest_dt
+  STORED AS SCD TYPE 2
 ;
