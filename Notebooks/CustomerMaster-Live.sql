@@ -92,7 +92,7 @@ COMMENT "View built against Channel reference data."
 AS SELECT channelId,
           channelName,
           description
-     FROM ggw_retail_bdc.channel_master
+     FROM ggw_retail_wshp.channel_master
 ;
 
 -- COMMAND ----------

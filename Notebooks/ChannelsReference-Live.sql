@@ -5,14 +5,14 @@
 
 -- COMMAND ----------
 
--- MAGIC %md # Silver Reference/Master - use DLT to automatically load Channels csv file
+-- MAGIC %md ## Silver Reference/Master - use DLT to automatically load Channels csv file
 -- MAGIC   
 -- MAGIC **Common Storage Format:** Delta  
 -- MAGIC **Data Types:** Cast & check Nulls
 
 -- COMMAND ----------
 
--- MAGIC %md ## Step 0 - Get Table info from select/table create command  
+-- MAGIC %md ### Step 0 - Get Table info from select/table create command  
 -- MAGIC   
 -- MAGIC -- This is the syntax from the CSV Table  
 -- MAGIC -- We will not run this, but it serves to direct our table names (if we want) and datatypes (if we agree)
@@ -29,7 +29,7 @@
 
 -- COMMAND ----------
 
--- MAGIC %md ## Step 1-a - simplest query
+-- MAGIC %md ### Step 1-a - simplest query
 
 -- COMMAND ----------
 
@@ -43,7 +43,7 @@
 
 -- COMMAND ----------
 
--- MAGIC %md ## Step 1-b - simple query  
+-- MAGIC %md ### Step 1-b - simple query  
 -- MAGIC   
 -- MAGIC Added comments and specific columns (if of interest)
 
@@ -67,7 +67,7 @@
 
 -- COMMAND ----------
 
--- MAGIC %md ## Step 2 - enrich with COMMENTS & Data Lineage
+-- MAGIC %md ### Step 2 - enrich with COMMENTS & Data Lineage
 
 -- COMMAND ----------
 
@@ -97,7 +97,7 @@
 
 -- COMMAND ----------
 
--- MAGIC %md ## Step 3 - Add basic data constraints
+-- MAGIC %md ### Step 3 - Add basic data constraints
 
 -- COMMAND ----------
 
@@ -129,7 +129,7 @@ SELECT
 
 -- COMMAND ----------
 
--- MAGIC %md ## Step 4 - Add SCD Type Tracking to a Silver Master Channel table
+-- MAGIC %md ### Step 4 - Add SCD Type Tracking to a Silver Master Channel table
 
 -- COMMAND ----------
 
