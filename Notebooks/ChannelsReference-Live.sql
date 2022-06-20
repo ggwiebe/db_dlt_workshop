@@ -5,14 +5,19 @@
 
 -- COMMAND ----------
 
--- MAGIC %md ## Silver Reference/Master - use DLT to automatically load Channels csv file
+-- MAGIC %md ## Reference/Master - use DLT to automatically load Retail Sales Channels csv file
 -- MAGIC   
 -- MAGIC **Common Storage Format:** Delta  
--- MAGIC **Data Types:** Cast & check Nulls
+-- MAGIC **Data Types:** Cast & check Nulls  
+-- MAGIC   
+-- MAGIC Use the following progressive/iterative development to load this data source:  
+-- MAGIC - Start by profiling your data (in DB SQL Query Editor)
+-- MAGIC - Then start with simplest approach;
+-- MAGIC - Test/Run this and each progressively more enriched version of the DLT pipeline
 
 -- COMMAND ----------
 
--- MAGIC %md ### Step 0 - Get Table info from select/table create command  
+-- MAGIC %md ### Step 0 - Data Profile: Get Table info from select/table create command  
 -- MAGIC   
 -- MAGIC -- This is the syntax from the CSV Table  
 -- MAGIC -- We will not run this, but it serves to direct our table names (if we want) and datatypes (if we agree)
@@ -29,23 +34,23 @@
 
 -- COMMAND ----------
 
--- MAGIC %md ### Step 1-a - simplest query
+-- MAGIC %md ### Step 1 - simplest query
 
 -- COMMAND ----------
 
--- CREATE STREAMING LIVE TABLE channel
--- TBLPROPERTIES ("quality" = "reference")
--- COMMENT "Channel Reference dataset ingested from cloud object storage landing zone"
--- AS 
--- SELECT *
---   FROM cloud_files('/FileStore/tables/ggw_dlt_wshp/channel*.csv', 'csv', map('header', 'true', 'cloudFiles.inferColumnTypes', 'true') )
--- ;
+CREATE STREAMING LIVE TABLE channel
+TBLPROPERTIES ("quality" = "reference")
+COMMENT "Channel Reference dataset ingested from cloud object storage landing zone"
+AS 
+SELECT *
+  FROM cloud_files('/FileStore/tables/ggw_dlt_wshp/channel*.csv', 'csv', map('header', 'true', 'cloudFiles.inferColumnTypes', 'true') )
+;
 
 -- COMMAND ----------
 
 -- MAGIC %md ### Step 1-b - simple query  
 -- MAGIC   
--- MAGIC Added comments and specific columns (if of interest)
+-- MAGIC Added comments and specific columns (if of interest - probably not).
 
 -- COMMAND ----------
 
@@ -101,31 +106,31 @@
 
 -- COMMAND ----------
 
-CREATE STREAMING LIVE TABLE channel
-  (
-    channelId int                 COMMENT 'ID of Sales Channel casted to int',
-    channelName string            COMMENT 'Name of Retail Sales Channel',
-    description string            COMMENT 'Description of Retail Sales Channel',
-    input_file_name string        COMMENT 'Name of file in raw storage bucket',
-    dlt_ingest_dt timestamp       COMMENT 'timestamp of dlt ingest', 
-    dlt_ingest_procedure string   COMMENT 'name of the routine used to load table',
-    dlt_ingest_principal string   COMMENT 'name of principal running load routine',
-    CONSTRAINT valid_channel_id   EXPECT (channelId IS NOT NULL) ON VIOLATION FAIL UPDATE,
-    CONSTRAINT valid_channel_name EXPECT (channelName IS NOT NULL) ON VIOLATION DROP ROW
-  )
-TBLPROPERTIES ("quality" = "reference")
-COMMENT "Channel Reference dataset ingested from cloud object storage landing zone"
-AS 
-SELECT 
-    channelId,
-    channelName,
-    description,
-    input_file_name() input_file_name,
-    current_timestamp() dlt_ingest_dt,
-    "RetailReference_Live" dlt_ingest_procedure,
-    current_user() dlt_ingest_principal
-  FROM cloud_files('/FileStore/tables/ggw_dlt_wshp/channel*.csv', 'csv', map('header', 'true', 'cloudFiles.inferColumnTypes', 'true') )
-;
+-- CREATE STREAMING LIVE TABLE channel
+--   (
+--     channelId int                 COMMENT 'ID of Sales Channel casted to int',
+--     channelName string            COMMENT 'Name of Retail Sales Channel',
+--     description string            COMMENT 'Description of Retail Sales Channel',
+--     input_file_name string        COMMENT 'Name of file in raw storage bucket',
+--     dlt_ingest_dt timestamp       COMMENT 'timestamp of dlt ingest', 
+--     dlt_ingest_procedure string   COMMENT 'name of the routine used to load table',
+--     dlt_ingest_principal string   COMMENT 'name of principal running load routine',
+--     CONSTRAINT valid_channel_id   EXPECT (channelId IS NOT NULL) ON VIOLATION FAIL UPDATE,
+--     CONSTRAINT valid_channel_name EXPECT (channelName IS NOT NULL) ON VIOLATION DROP ROW
+--   )
+-- TBLPROPERTIES ("quality" = "reference")
+-- COMMENT "Channel Reference dataset ingested from cloud object storage landing zone"
+-- AS 
+-- SELECT 
+--     channelId,
+--     channelName,
+--     description,
+--     input_file_name() input_file_name,
+--     current_timestamp() dlt_ingest_dt,
+--     "RetailReference_Live" dlt_ingest_procedure,
+--     current_user() dlt_ingest_principal
+--   FROM cloud_files('/FileStore/tables/ggw_dlt_wshp/channel*.csv', 'csv', map('header', 'true', 'cloudFiles.inferColumnTypes', 'true') )
+-- ;
 
 -- COMMAND ----------
 
@@ -133,29 +138,29 @@ SELECT
 
 -- COMMAND ----------
 
--- SILVER - View against Bronze that will be used to load silver incrementally with APPLY CHANGES INTO
-CREATE TEMPORARY STREAMING LIVE VIEW channel_master_v (
-  CONSTRAINT valid_file         EXPECT (input_file_name IS NOT NULL) ON VIOLATION DROP ROW,
-  CONSTRAINT valid_procedure    EXPECT (dlt_ingest_procedure IS NOT NULL) ON VIOLATION DROP ROW
-)
-COMMENT "View of cleansed Channel (bronze tier) for loading into / mastering in Silver."
-AS SELECT channelId,
-          channelName,
-          description,
-          input_file_name,
-          dlt_ingest_dt,
-          dlt_ingest_procedure,
-          dlt_ingest_principal
-     FROM STREAM(LIVE.channel) c
-;
+-- -- SILVER - View against Bronze that will be used to load silver incrementally with APPLY CHANGES INTO
+-- CREATE TEMPORARY STREAMING LIVE VIEW channel_master_v (
+--   CONSTRAINT valid_file         EXPECT (input_file_name IS NOT NULL) ON VIOLATION DROP ROW,
+--   CONSTRAINT valid_procedure    EXPECT (dlt_ingest_procedure IS NOT NULL) ON VIOLATION DROP ROW
+-- )
+-- COMMENT "View of cleansed Channel (bronze tier) for loading into / mastering in Silver."
+-- AS SELECT channelId,
+--           channelName,
+--           description,
+--           input_file_name,
+--           dlt_ingest_dt,
+--           dlt_ingest_procedure,
+--           dlt_ingest_principal
+--      FROM STREAM(LIVE.channel) c
+-- ;
 
 -- COMMAND ----------
 
--- SILVER [CDC] - Ingest changes via APPLY CHANGES INTO syntax
-CREATE STREAMING LIVE TABLE channel_master;
- APPLY CHANGES INTO LIVE.channel_master
-  FROM STREAM(LIVE.channel_master_v)
-  KEYS (channelId)
-  SEQUENCE BY dlt_ingest_dt
-  STORED AS SCD TYPE 2
-;
+-- -- SILVER [CDC] - Ingest changes via APPLY CHANGES INTO syntax
+-- CREATE STREAMING LIVE TABLE channel_master;
+--  APPLY CHANGES INTO LIVE.channel_master
+--   FROM STREAM(LIVE.channel_master_v)
+--   KEYS (channelId)
+--   SEQUENCE BY dlt_ingest_dt
+--   STORED AS SCD TYPE 2
+-- ;

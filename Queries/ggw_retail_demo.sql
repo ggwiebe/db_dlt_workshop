@@ -76,17 +76,90 @@ SELECT *
 ;
 
 
+---------------------------------------------------------------------------------------------------------------------------
+-- DLT Event Log & Data Quality Scores
+---------------------------------------------------------------------------------------------------------------------------
+CREATE TABLE ggw_retail_wshp.event_log
+USING delta
+LOCATION '/Users/glenn.wiebe@databricks.com/dlt_retail_wshp/system/events'
+;
+
+SELECT id,
+    --   sequence,
+       timestamp,
+       level,
+       event_type,
+       message,
+       details
+  FROM ggw_retail_wshp.event_log
+-- Uncomment this to leverage query widget
+--  WHERE level IN ({{ level }})
+;
+
+----------------------------------------------------------------------------------------
+-- Lineage
+----------------------------------------------------------------------------------------
+SELECT details:flow_definition.output_dataset,
+       details:flow_definition.input_datasets,
+       details:flow_definition.flow_type,
+       details:flow_definition.schema 
+    --  , details:flow_definition.explain_text,
+    --   details:flow_definition
+  FROM ggw_retail_wshp.event_log
+ WHERE details:flow_definition IS NOT NULL
+ ORDER BY timestamp
+
+----------------------------------------------------------------------------------------
+-- Pipeline Data Components
+----------------------------------------------------------------------------------------
+SELECT details:flow_definition.output_dataset,
+       details:flow_definition.input_datasets
+  FROM ggw_retail_wshp.event_log
+ WHERE details:flow_definition IS NOT NULL
+
+----------------------------------------------------------------------------------------
+-- Flow Progress & Data Quality Results
+----------------------------------------------------------------------------------------
+SELECT 
+  id,
+  details:flow_progress,
+  details:flow_progress.status,
+  details:flow_progress.metrics.num_output_rows,
+  details:flow_progress.metrics.backlog_bytes,
+  details:flow_progress.data_quality.dropped_records,
+  details:flow_progress:data_quality:expectations
+--   explode(from_json(details:flow_progress:data_quality:expectations
+--           ,schema_of_json("[{'name':'str', 'dataset':'str', 'passed_records':42, 'failed_records':42}]"))) expectations,
+FROM ggw_retail_wshp.event_log
+WHERE details:flow_progress.metrics IS NOT NULL
+ORDER BY timestamp
+
+----------------------------------------------------------------------------------------
+-- Data Quality Expectation Metrics
+----------------------------------------------------------------------------------------
+SELECT id,
+       expectations.dataset,
+       expectations.name,
+       expectations.failed_records,
+       expectations.passed_records
+  FROM (
+        SELECT id,
+               timestamp,
+               details:flow_progress.metrics,
+               details:flow_progress.data_quality.dropped_records,
+               explode(from_json(details:flow_progress:data_quality:expectations
+                        ,schema_of_json("[{'name':'str', 'dataset':'str', 'passed_records':42, 'failed_records':42}]"))) expectations
+          FROM ggw_retail_wshp.event_log
+         WHERE details:flow_progress.metrics IS NOT NULL
+        ) data_quality
+;
+
 
 ---------------------------------------------------------------------------------------------------------------------------
 -- Reset
 ---------------------------------------------------------------------------------------------------------------------------
-DROP TABLE ggw_retail_wshp.channel
-DROP VIEW ggw_retail_wshp.channel_master
-DROP TABLE ggw_retail_wshp.customer_bronze
-DROP TABLE ggw_retail_wshp.__apply_changes_storage_channel_master
-
-
-
-
-
-
+DROP TABLE ggw_retail_wshp.channel;
+DROP VIEW ggw_retail_wshp.channel_master;
+DROP TABLE ggw_retail_wshp.customer_bronze;
+DROP TABLE ggw_retail_wshp.customer_silver;
+DROP TABLE ggw_retail_wshp.__apply_changes_storage_channel_master;
