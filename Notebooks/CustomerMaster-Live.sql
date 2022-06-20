@@ -1,7 +1,7 @@
 -- Databricks notebook source
 -- MAGIC %md # Delta Live Table - Retail Customer Master Load 
 -- MAGIC   
--- MAGIC ![DLT Process Flow](https://raw.githubusercontent.com/ggwiebe/db-fe-dlt/main/dlt/applychanges/images/DLT_Process_Flow.png)
+-- MAGIC ![DLT Process Flow](https://raw.githubusercontent.com/ggwiebe/db_dlt_workshop/main/images/DLT_Process_Flow.png)
 
 -- COMMAND ----------
 
