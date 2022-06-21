@@ -2,7 +2,16 @@
 Databricks Delta Live Tables Workshop
 
 This Repo has all the contents necessary to run a moderate (moderately advanced / complete) DLT workshop, from data discovery & profiling,
-to simple pipeline developmemnt with Delta Live Tables (DLT) through to more advanced DLT with CDC, SCD and other event monitoring facilities.
+to simple pipeline developmemnt with Delta Live Tables (DLT) through to more advanced DLT with CDC, SCD and other event monitoring facilities.  
+
+X. Worshop Flow
+  
+This workshop follows a flow that:
+1. Builds the two channels
+2. Builds a multi-channel workflow
+3. Defines a DLT EventLog table and creates associated queries
+  
+**NOTE:** for each channel, you will find the code commented out back to the simplest state; comment & uncomment subequent sections of code to go from a simple pipeline to an enhanced pipeline.  
   
 A. Sales Channels Reference Data
 - From Data Profiling and simple pipeline development with DLT through to a data and tables lineage tracking
