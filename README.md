@@ -18,7 +18,7 @@ A. Sales Channels Reference Data
   
 The following screenshot shows the enhanced / final version that includes SCD Type tracking and data lineage:
 <img src="https://raw.githubusercontent.com/ggwiebe/db_dlt_workshop/main/images/DLT_ChannelReference_Pipeline.png" width=1024>
-<!-- ![DLT Process Flow](https://raw.githubusercontent.com/ggwiebe/db_dlt_workshop/main/images/DLT_ChannelReference_Pipeline.png) -->
+<!-- ![DLT Channel Reference Pipeline](https://raw.githubusercontent.com/ggwiebe/db_dlt_workshop/main/images/DLT_ChannelReference_Pipeline.png) -->
   
 B. Customers Master Data
 - A classic MDM application for Customer data
@@ -30,7 +30,7 @@ B. Customers Master Data
   
 The following screenshot shows the enhanced / final version that includes bronze -> silver -> gold data landscape with views, expectations, cdc, and SCD Type 2 tracking:
 <img src="https://raw.githubusercontent.com/ggwiebe/db_dlt_workshop/main/images/DLT_CustomerMaster_Pipeline.png" width=1024>
-<!-- ![DLT Process Flow](https://raw.githubusercontent.com/ggwiebe/db_dlt_workshop/main/images/DLT_CustomerMaster_Pipeline.png) -->
+<!-- ![DLT Customer Master Pipeline](https://raw.githubusercontent.com/ggwiebe/db_dlt_workshop/main/images/DLT_CustomerMaster_Pipeline.png) -->
   
 C. DLT Event Monitoring
 - Queries for pipelines, lineage, and runtime metrics
@@ -38,7 +38,7 @@ C. DLT Event Monitoring
   
 The following screenshot shows a sample DLT monitoring dashboard based on the DLT event log table and event, lineage and metric queries:
 <img src="https://raw.githubusercontent.com/ggwiebe/db_dlt_workshop/main/images/RetailSales_DLT_MonitoringDashboard.png" width=1024>
-<!-- ![DLT Process Flow](https://raw.githubusercontent.com/ggwiebe/db_dlt_workshop/main/images/RetailSales_DLT_MonitoringDashboard.png) -->
+<!-- ![DLT Monitoring](https://raw.githubusercontent.com/ggwiebe/db_dlt_workshop/main/images/RetailSales_DLT_MonitoringDashboard.png) -->
   
 D. DLT and Databricks Workflows
 - Support multi-step data pipelines
