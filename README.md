@@ -46,6 +46,6 @@ D. DLT and Databricks Workflows
 - Enable precendence dependencies (e.g. Product Master Load in parallel with Customer Master Load, both as precedents for SalesOrder)
    
 The following screenshot shows a multi-step workflow that runs the Sales Channel reference data load, on which the Customer data load is dependent on (i.e. A customer's Sales Channel should use the most up-to-date definition of the SalesChannel info):
-<img src="https://raw.githubusercontent.com/ggwiebe/db_dlt_workshop/main/images/Job_Channel_Customer_workflow.png" width=1024>
+<img src="https://raw.githubusercontent.com/ggwiebe/db_dlt_workshop/main/images/Job_Channel_Customer_workflow.png" width=800>
 <!-- ![DLT Process Flow](https://raw.githubusercontent.com/ggwiebe/db_dlt_workshop/main/images/Job_Channel_Customer_workflow.png) -->
   
