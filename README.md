@@ -21,8 +21,12 @@ This workshop follows a flow that:
 - "Upload" all remaining sample files to this same folder using the Data Explorer tool; *Note* this should match the CloudFiles location used in your first DB SQL queries and DLT pipeline notebooks)
 - Rename all but the original files from .csv to .cs_ (or some other such extenstion that will not get automatically picked up);
 - During DLT demonstration, rename the individual files to .csv to trigger the ingestion of these files and associated data scenarios (expectation failure handling, incremental changes, etc.)
-Here is an example of the "Create New Table" wizard:
-<img src="https://raw.githubusercontent.com/ggwiebe/db_dlt_workshop/main/images/CreateNewTable_UploadFile.png" width=600>
+  
+Here is an example of the "Create New Table" wizard:  
+<img src="https://raw.githubusercontent.com/ggwiebe/db_dlt_workshop/main/images/CreateNewTable_UploadFile.png" width=600>  
+  
+Here is the Data Wrangling queries in DB SQL:  
+<img src="https://raw.githubusercontent.com/ggwiebe/db_dlt_workshop/main/images/RetailSandbox_QranglingQueries.png" width=800>
   
 A. Sales Channels Reference Data
 - From Data Profiling and simple pipeline development with DLT through to a data and tables lineage tracking
