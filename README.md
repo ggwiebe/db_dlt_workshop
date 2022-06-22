@@ -7,11 +7,22 @@ to simple pipeline developmemnt with Delta Live Tables (DLT) through to more adv
 X. Worshop Flow
   
 This workshop follows a flow that:
-1. Builds the two channels
-2. Builds a multi-channel workflow
-3. Defines a DLT EventLog table and creates associated queries
+1. Manual Data Wrangling (upload data file, query & profile the data & structure); this serves as the starting point for:
+2. Builds the two channels
+3. Builds a multi-channel workflow
+4. Defines a DLT EventLog table and creates associated queries
   
-**NOTE:** for each channel, you will find the code commented out back to the simplest state; comment & uncomment subequent sections of code to go from a simple pipeline to an enhanced pipeline.  
+**Pipeline Development Note:** for each channel, you will find the code commented out back to the simplest state; comment & uncomment subequent sections of code to go from a simple pipeline to an enhanced pipeline.  
+  
+**Data Files Note:** The workshop can work with data files in a number of ways (e.g. DBFS and external cloud sources); The screenshots in the associated presentation were done from DBFS. DBFS has the benefit of being easy to rename the files to hide from the pipeline and exposing as needed. The approach folloed in this workshop presentation is:
+- (Pre-workshop) Create a retail sandbox database for the first data wrangling elements (pre-DLT); e.g. ggw_retail_sandbox 
+- (Optional Pre-workshop) Creating a separate file upload dbfs folder under /FileStore/tables, e.g. /FileStore/tables/ggw_retail_wshp; <-- Withouth this step the /FileStore/tables folder will be used for subequent "Create New Table" wizard and this may have many other files present.
+- Begin workshop "1. Manual Data Wrangling" section by using the Data Explorer "Create New Table" tool and its "Upload File" option to upload the supplied channels.csv & subsequently the customers.csv; This step is to create a sandbox version of the table from the manually ingested file;
+- "Upload" all remaining sample files to this same folder using the Data Explorer tool; *Note* this should match the CloudFiles location used in your first DB SQL queries and DLT pipeline notebooks)
+- Rename all but the original files from .csv to .cs_ (or some other such extenstion that will not get automatically picked up);
+- During DLT demonstration, rename the individual files to .csv to trigger the ingestion of these files and associated data scenarios (expectation failure handling, incremental changes, etc.)
+Here is an example of the "Create New Table" wizard:
+<img src="https://raw.githubusercontent.com/ggwiebe/db_dlt_workshop/main/images/CreateNewTable_UploadFile.png" width=600>
   
 A. Sales Channels Reference Data
 - From Data Profiling and simple pipeline development with DLT through to a data and tables lineage tracking
