@@ -15,18 +15,18 @@ This workshop follows a flow that:
 **Pipeline Development Note:** for each channel, you will find the code commented out back to the simplest state; comment & uncomment subequent sections of code to go from a simple pipeline to an enhanced pipeline.  
   
 **Data Files Note:** The workshop can work with data files in a number of ways (e.g. DBFS and external cloud sources); The screenshots in the associated presentation were done from DBFS. DBFS has the benefit of being easy to rename the files to hide from the pipeline and exposing as needed. The approach folloed in this workshop presentation is:
-- (Pre-workshop) Create a retail sandbox database for the first data wrangling elements (pre-DLT); e.g. ggw_retail_sandbox 
-- (Optional Pre-workshop) Creating a separate file upload dbfs folder under /FileStore/tables, e.g. /FileStore/tables/ggw_retail_wshp; <-- Withouth this step the /FileStore/tables folder will be used for subequent "Create New Table" wizard and this may have many other files present.
+- (Pre-workshop) Create a retail sandbox database for the first data wrangling elements (pre-DLT); e.g.`ggw_retail_sandbox`
+- (Optional Pre-workshop) Creating a separate file upload dbfs folder under /FileStore/tables, e.g. `/FileStore/tables/ggw_retail_wshp`; <-- Withouth this step the `/FileStore/tables` folder will be used for subequent "Create New Table" wizard and this may have many other files present.
 - Begin workshop "1. Manual Data Wrangling" section by using the Data Explorer "Create New Table" tool and its "Upload File" option to upload the supplied channels.csv & subsequently the customers.csv; This step is to create a sandbox version of the table from the manually ingested file;
 - "Upload" all remaining sample files to this same folder using the Data Explorer tool; *Note* this should match the CloudFiles location used in your first DB SQL queries and DLT pipeline notebooks)
-- Rename all but the original files from .csv to .cs_ (or some other such extenstion that will not get automatically picked up);
-- During DLT demonstration, rename the individual files to .csv to trigger the ingestion of these files and associated data scenarios (expectation failure handling, incremental changes, etc.)
+- Rename all but the original files from `.csv` to `.cs_` (or some other such extenstion that will not get automatically picked up);
+- During DLT demonstration, rename the individual files to `.csv` to trigger the ingestion of these files and associated data scenarios (expectation failure handling, incremental changes, etc.)
   
 Here is an example of the "Create New Table" wizard:  
 <img src="https://raw.githubusercontent.com/ggwiebe/db_dlt_workshop/main/images/CreateNewTable_UploadFile.png" width=600>  
   
 Here is the Data Wrangling queries in DB SQL:  
-<img src="https://raw.githubusercontent.com/ggwiebe/db_dlt_workshop/main/images/RetailSandbox_QranglingQueries.png" width=800>
+<img src="https://raw.githubusercontent.com/ggwiebe/db_dlt_workshop/main/images/RetailSandbox_WranglingQueries.png" width=800>
   
 A. Sales Channels Reference Data
 - From Data Profiling and simple pipeline development with DLT through to a data and tables lineage tracking
@@ -39,7 +39,7 @@ B. Customers Master Data
 - A classic MDM application for Customer data
 - Leveraging SCD Type 2
 - Views and Joins to enrich pipelines
-- Change Data Capture (CDC) pattern delivery with APPLY INTO DLT syntax 
+- Change Data Capture (CDC) pattern delivery with `APPLY INTO DLT` syntax 
 - Improve data quality
 - Gold Serving data mart
   
